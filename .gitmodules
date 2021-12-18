@@ -1,0 +1,3 @@
+[submodule "submodules/skitscript/interpreter-test-suite"]
+	path = submodules/skitscript/interpreter-test-suite
+	url = https://github.com/skitscript/interpreter-test-suite
