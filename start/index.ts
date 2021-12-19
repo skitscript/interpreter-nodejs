@@ -25,7 +25,7 @@ export const start = (document: ValidDocument): InterpreterState => {
       flagsSet: [],
       characters: characters.map((character) => ({
         character,
-        state: { type: `nonPresent` },
+        state: { type: `notPresent` },
         emote: `neutral`,
       })),
       speakers: [],

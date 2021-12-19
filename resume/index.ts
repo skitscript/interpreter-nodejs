@@ -38,7 +38,7 @@ export const resume = (
       ...character,
       state:
         character.state.type === `exiting`
-          ? { type: `nonPresent` }
+          ? { type: `notPresent` }
           : character.state.type === `entering`
           ? { type: `present` }
           : character.state,
