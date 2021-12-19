@@ -7,6 +7,13 @@ import { resume } from "../resume";
  * @returns The first state to present to the user.
  */
 export const start = (document: ValidDocument): InterpreterState => {
+  if (document.instructions.length === 0) {
+    return {
+      type: `invalid`,
+      error: { type: `infiniteLoop` },
+    };
+  }
+
   const characters: string[] = [];
 
   for (const identifier of document.identifierInstances) {
