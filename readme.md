@@ -66,7 +66,7 @@ the information to present to the user:
 TODO
 ```
 
-When they determine how to proceed, import the `continue` function and provide
+When they determine how to proceed, import the `resume` function and provide
 details regarding what was selected to receive a next piece of information to
 present to the user:
 
