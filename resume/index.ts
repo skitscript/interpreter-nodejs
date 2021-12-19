@@ -49,6 +49,11 @@ export const resume = (
   let line: null | ReadonlyArray<InterpreterStateRun> = null;
   const menuOptions: MenuOptionInstruction[] = [];
 
+  const history: {
+    readonly instructionIndex: number;
+    readonly flagsSet: ReadonlyArray<string>;
+  }[] = [];
+
   const conditionPasses = (condition: null | Condition): boolean => {
     if (condition == null) {
       return true;
@@ -118,7 +123,24 @@ export const resume = (
           instructionIndex,
         },
       };
+    } else if (
+      history.some(
+        (item) =>
+          item.instructionIndex === instructionIndex &&
+          item.flagsSet.length === flagsSet.length &&
+          item.flagsSet.every((flag) => flagsSet.includes(flag))
+      )
+    ) {
+      return {
+        type: `invalid`,
+        error: { type: `infiniteLoop` },
+      };
     } else {
+      history.push({
+        instructionIndex,
+        flagsSet: [...flagsSet],
+      });
+
       switch (instruction.type) {
         case `clear`: {
           const index = flagsSet.indexOf(instruction.flag.normalized);
