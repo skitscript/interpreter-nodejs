@@ -182,15 +182,35 @@ export const resume = (
               character.character === instruction.character.normalized
           );
 
+          const previousCharacter = state.characters[
+            index
+          ] as InterpreterStateCharacter;
+
           const character = characters[index] as InterpreterStateCharacter;
 
-          characters.splice(index, 1, {
-            ...character,
-            state: {
-              type: `entering`,
-              animation: instruction.animation.normalized,
-            },
-          });
+          switch (previousCharacter.state.type) {
+            case `entering`:
+            case `present`:
+              characters.splice(index, 1, {
+                ...character,
+                state: {
+                  type: `present`,
+                },
+              });
+              break;
+
+            case `exiting`:
+            case `notPresent`: {
+              characters.splice(index, 1, {
+                ...character,
+                state: {
+                  type: `entering`,
+                  animation: instruction.animation.normalized,
+                },
+              });
+              break;
+            }
+          }
 
           break;
         }
@@ -201,16 +221,37 @@ export const resume = (
               character.character === instruction.character.normalized
           );
 
+          const previousCharacter = state.characters[
+            index
+          ] as InterpreterStateCharacter;
+
           const character = characters[index] as InterpreterStateCharacter;
 
-          characters.splice(index, 1, {
-            ...character,
-            state: {
-              type: `exiting`,
-              animation: instruction.animation.normalized,
-            },
-          });
+          switch (previousCharacter.state.type) {
+            case `entering`:
+            case `present`: {
+              characters.splice(index, 1, {
+                ...character,
+                state: {
+                  type: `exiting`,
+                  animation: instruction.animation.normalized,
+                },
+              });
 
+              break;
+            }
+
+            case `exiting`:
+            case `notPresent`:
+              characters.splice(index, 1, {
+                ...character,
+                state: {
+                  type: `notPresent`,
+                },
+              });
+
+              break;
+          }
           break;
         }
 
