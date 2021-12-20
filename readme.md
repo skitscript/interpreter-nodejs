@@ -87,9 +87,9 @@ details regarding what was selected to receive a next piece of information to
 present to the user:
 
 ```typescript
-import { start } from "@skitscript/interpreter-nodejs";
+import { resume } from "@skitscript/interpreter-nodejs";
 
-const nextState = start(
+const nextState = resume(
   parsedDocument,
   previousState,
   previousState.interaction.instructionIndex
