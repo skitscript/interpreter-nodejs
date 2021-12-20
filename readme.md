@@ -63,7 +63,23 @@ Import the `start` function, and provide it with a parsed document to receive
 the information to present to the user:
 
 ```typescript
-TODO
+import { start } from "@skitscript/interpreter-nodejs";
+
+const state = start(parsedDocument);
+
+console.log(state);
+```
+
+```json
+{
+  "type": "valid",
+  "flagsSet": [...],
+  "characters": [...],
+  "speakers": [...],
+  "background": null,
+  "line": null,
+  "interaction": {...}
+}
 ```
 
 When they determine how to proceed, import the `resume` function and provide
@@ -71,5 +87,25 @@ details regarding what was selected to receive a next piece of information to
 present to the user:
 
 ```typescript
-TODO
+import { start } from "@skitscript/interpreter-nodejs";
+
+const nextState = start(
+  parsedDocument,
+  previousState,
+  previousState.interaction.instructionIndex
+);
+
+console.log(nextState);
+```
+
+```json
+{
+  "type": "valid",
+  "flagsSet": [...],
+  "characters": [...],
+  "speakers": [...],
+  "background": null,
+  "line": null,
+  "interaction": {...}
+}
 ```
