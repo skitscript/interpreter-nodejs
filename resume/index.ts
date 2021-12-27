@@ -163,7 +163,7 @@ export const resume = (
         case `emote`: {
           const index = characters.findIndex(
             (character) =>
-              character.character === instruction.character.normalized
+              character.normalized === instruction.character.normalized
           );
 
           const character = characters[index] as InterpreterStateCharacter;
@@ -179,7 +179,7 @@ export const resume = (
         case `entryAnimation`: {
           const index = characters.findIndex(
             (character) =>
-              character.character === instruction.character.normalized
+              character.normalized === instruction.character.normalized
           );
 
           const previousCharacter = state.characters[
@@ -218,7 +218,7 @@ export const resume = (
         case `exitAnimation`: {
           const index = characters.findIndex(
             (character) =>
-              character.character === instruction.character.normalized
+              character.normalized === instruction.character.normalized
           );
 
           const previousCharacter = state.characters[
