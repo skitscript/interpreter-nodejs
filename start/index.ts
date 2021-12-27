@@ -1,4 +1,8 @@
-import type { InterpreterState, ValidDocument } from "@skitscript/types-nodejs";
+import type {
+  InterpreterState,
+  InterpreterStateCharacter,
+  ValidDocument,
+} from "@skitscript/types-nodejs";
 import { resume } from "../resume";
 
 /**
@@ -14,14 +18,21 @@ export const start = (document: ValidDocument): InterpreterState => {
     };
   }
 
-  const characters: string[] = [];
+  const characters: InterpreterStateCharacter[] = [];
 
   for (const identifier of document.identifierInstances) {
     if (
       identifier.type === `character` &&
-      !characters.includes(identifier.normalized)
+      !characters.some(
+        (character) => character.normalized === identifier.normalized
+      )
     ) {
-      characters.push(identifier.normalized);
+      characters.push({
+        normalized: identifier.normalized,
+        verbatim: identifier.verbatim,
+        emote: `neutral`,
+        state: { type: `notPresent` },
+      });
     }
   }
 
@@ -30,11 +41,7 @@ export const start = (document: ValidDocument): InterpreterState => {
     {
       type: `valid`,
       flagsSet: [],
-      characters: characters.map((character) => ({
-        character,
-        state: { type: `notPresent` },
-        emote: `neutral`,
-      })),
+      characters,
       speakers: [],
       background: null,
       line: null,
