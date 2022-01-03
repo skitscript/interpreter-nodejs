@@ -2,8 +2,8 @@ import type {
   Document,
   InterpreterStateCharacter,
   InterpreterStateError,
-  InterpreterStateInteraction,
   InterpreterStateRun,
+  MenuInterpreterStateInteractionOption,
 } from "@skitscript/types-nodejs";
 import * as fs from "fs";
 import * as path from "path";
@@ -66,7 +66,16 @@ for (const caseName of caseNames) {
               readonly speakers: ReadonlyArray<string>;
               readonly background: null | string;
               readonly line: null | ReadonlyArray<InterpreterStateRun>;
-              readonly interaction: InterpreterStateInteraction;
+              readonly interaction:
+                | {
+                    readonly type: `dismiss`;
+                  }
+                | {
+                    readonly type: `menu`;
+                    readonly options: ReadonlyArray<{
+                      readonly content: ReadonlyArray<InterpreterStateRun>;
+                    }>;
+                  };
             };
 
         let expected: ReadonlyArray<Step | number>;
@@ -94,7 +103,17 @@ for (const caseName of caseNames) {
                       speakers: state.speakers,
                       background: state.background,
                       line: state.line,
-                      interaction: state.interaction,
+                      interaction:
+                        state.interaction.type === `dismiss`
+                          ? { type: `dismiss` }
+                          : {
+                              type: `menu`,
+                              options: state.interaction.options.map(
+                                (option) => ({
+                                  content: option.content,
+                                })
+                              ),
+                            },
                     }
                   : state,
               ];
@@ -106,12 +125,27 @@ for (const caseName of caseNames) {
 
                 break;
               }
+              if (state.interaction.type === `dismiss`) {
+                state = resume(
+                  document,
+                  state,
+                  state.interaction.instructionIndex
+                );
+              } else {
+                const optionIndex = expected[actual.length] as number;
 
-              const statementIndex = expected[actual.length] as number;
+                actual = [...actual, optionIndex];
 
-              actual = [...actual, statementIndex];
-
-              state = resume(document, state, statementIndex);
+                state = resume(
+                  document,
+                  state,
+                  (
+                    state.interaction.options[
+                      optionIndex
+                    ] as MenuInterpreterStateInteractionOption
+                  ).instructionIndex
+                );
+              }
             }
           }
         });
