@@ -93,7 +93,7 @@ export const resume = (
 
     if (
       menuOptions.length > 0 &&
-      (instruction.type !== `menuOption` || menuOptions.includes(instruction))
+      (instruction.type !== `menuOption` || instructionIndex === 0)
     ) {
       return {
         type: `valid`,
@@ -110,7 +110,10 @@ export const resume = (
           })),
         },
       };
-    } else if (line !== null && instruction.type !== `menuOption`) {
+    } else if (
+      line !== null &&
+      (instruction.type !== `menuOption` || instructionIndex === 0)
+    ) {
       return {
         type: `valid`,
         flagsSet,
