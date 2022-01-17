@@ -7,18 +7,18 @@ import type {
   MenuOptionInstruction,
   Run,
   ValidDocument,
-  ValidInterpreterState,
-} from "@skitscript/types-nodejs";
+  ValidInterpreterState
+} from '@skitscript/types-nodejs'
 
 const stripRuns = (
-  runs: ReadonlyArray<Run>
-): ReadonlyArray<InterpreterStateRun> =>
+  runs: readonly Run[]
+): readonly InterpreterStateRun[] =>
   runs.map((run) => ({
     bold: run.bold,
     code: run.code,
     italic: run.italic,
-    plainText: run.plainText,
-  }));
+    plainText: run.plainText
+  }))
 
 /**
  * Continues a previously started session.
@@ -32,100 +32,100 @@ export const resume = (
   state: ValidInterpreterState,
   instructionIndex: number
 ): InterpreterState => {
-  const flagsSet = [...state.flagsSet];
+  const flagsSet = [...state.flagsSet]
   const characters: InterpreterStateCharacter[] = state.characters.map(
     (character) => ({
       ...character,
       state:
-        character.state.type === `exiting`
-          ? { type: `notPresent` }
-          : character.state.type === `entering`
-          ? { type: `present` }
-          : character.state,
+        character.state.type === 'exiting'
+          ? { type: 'notPresent' }
+          : character.state.type === 'entering'
+            ? { type: 'present' }
+            : character.state
     })
-  );
-  let background = state.background;
-  let speakers = state.speakers;
-  let line: null | ReadonlyArray<InterpreterStateRun> = null;
-  const menuOptions: MenuOptionInstruction[] = [];
+  )
+  let background = state.background
+  let speakers = state.speakers
+  let line: null | readonly InterpreterStateRun[] = null
+  const menuOptions: MenuOptionInstruction[] = []
 
-  const history: {
-    readonly instructionIndex: number;
-    readonly flagsSet: ReadonlyArray<string>;
-  }[] = [];
+  const history: Array<{
+    readonly instructionIndex: number
+    readonly flagsSet: readonly string[]
+  }> = []
 
   const conditionPasses = (condition: null | Condition): boolean => {
     if (condition == null) {
-      return true;
+      return true
     } else {
       switch (condition.type) {
-        case `flagClear`:
-          return !flagsSet.includes(condition.flag.normalized);
+        case 'flagClear':
+          return !flagsSet.includes(condition.flag.normalized)
 
-        case `flagSet`:
-          return flagsSet.includes(condition.flag.normalized);
+        case 'flagSet':
+          return flagsSet.includes(condition.flag.normalized)
 
-        case `everyFlagClear`:
+        case 'everyFlagClear':
           return condition.flags.every(
             (flag) => !flagsSet.includes(flag.normalized)
-          );
+          )
 
-        case `everyFlagSet`:
+        case 'everyFlagSet':
           return condition.flags.every((flag) =>
             flagsSet.includes(flag.normalized)
-          );
+          )
 
-        case `someFlagsClear`:
+        case 'someFlagsClear':
           return condition.flags.some(
             (flag) => !flagsSet.includes(flag.normalized)
-          );
+          )
 
-        case `someFlagsSet`:
+        case 'someFlagsSet':
           return condition.flags.some((flag) =>
             flagsSet.includes(flag.normalized)
-          );
+          )
       }
     }
-  };
+  }
 
   for (;;) {
-    const instruction = document.instructions[instructionIndex] as Instruction;
+    const instruction = document.instructions[instructionIndex] as Instruction
 
     if (
       menuOptions.length > 0 &&
-      (instruction.type !== `menuOption` || instructionIndex === 0)
+      (instruction.type !== 'menuOption' || instructionIndex === 0)
     ) {
       return {
-        type: `valid`,
+        type: 'valid',
         flagsSet,
         characters,
         background,
         speakers,
         line,
         interaction: {
-          type: `menu`,
+          type: 'menu',
           options: menuOptions.map((menuOption) => ({
             content: stripRuns(menuOption.content),
-            instructionIndex: menuOption.instructionIndex,
-          })),
-        },
-      };
+            instructionIndex: menuOption.instructionIndex
+          }))
+        }
+      }
     } else if (
       line !== null &&
-      (instruction.type !== `menuOption` || instructionIndex === 0)
+      (instruction.type !== 'menuOption' || instructionIndex === 0)
     ) {
       return {
-        type: `valid`,
+        type: 'valid',
         flagsSet,
         characters,
         background,
         speakers,
         line,
         interaction: {
-          type: `dismiss`,
-          instructionIndex,
-        },
-      };
+          type: 'dismiss',
+          instructionIndex
+        }
+      }
     } else if (
       history.some(
         (item) =>
@@ -135,173 +135,173 @@ export const resume = (
       )
     ) {
       return {
-        type: `invalid`,
-        error: { type: `infiniteLoop` },
-      };
+        type: 'invalid',
+        error: { type: 'infiniteLoop' }
+      }
     } else {
       history.push({
         instructionIndex,
-        flagsSet: [...flagsSet],
-      });
+        flagsSet: [...flagsSet]
+      })
 
       switch (instruction.type) {
-        case `clear`: {
-          const index = flagsSet.indexOf(instruction.flag.normalized);
+        case 'clear': {
+          const index = flagsSet.indexOf(instruction.flag.normalized)
 
           if (index !== -1) {
-            flagsSet.splice(index, 1);
+            flagsSet.splice(index, 1)
           }
 
-          break;
+          break
         }
 
-        case `set`: {
+        case 'set': {
           if (!flagsSet.includes(instruction.flag.normalized)) {
-            flagsSet.push(instruction.flag.normalized);
+            flagsSet.push(instruction.flag.normalized)
           }
 
-          break;
+          break
         }
 
-        case `emote`: {
+        case 'emote': {
           const index = characters.findIndex(
             (character) =>
               character.normalized === instruction.character.normalized
-          );
+          )
 
-          const character = characters[index] as InterpreterStateCharacter;
+          const character = characters[index] as InterpreterStateCharacter
 
           characters.splice(index, 1, {
             ...character,
-            emote: instruction.emote.normalized,
-          });
+            emote: instruction.emote.normalized
+          })
 
-          break;
+          break
         }
 
-        case `entryAnimation`: {
+        case 'entryAnimation': {
           const index = characters.findIndex(
             (character) =>
               character.normalized === instruction.character.normalized
-          );
+          )
 
           const previousCharacter = state.characters[
             index
-          ] as InterpreterStateCharacter;
+          ] as InterpreterStateCharacter
 
-          const character = characters[index] as InterpreterStateCharacter;
+          const character = characters[index] as InterpreterStateCharacter
 
           switch (previousCharacter.state.type) {
-            case `entering`:
-            case `present`:
+            case 'entering':
+            case 'present':
               characters.splice(index, 1, {
                 ...character,
                 state: {
-                  type: `present`,
-                },
-              });
-              break;
+                  type: 'present'
+                }
+              })
+              break
 
-            case `exiting`:
-            case `notPresent`: {
+            case 'exiting':
+            case 'notPresent': {
               characters.splice(index, 1, {
                 ...character,
                 state: {
-                  type: `entering`,
-                  animation: instruction.animation.normalized,
-                },
-              });
-              break;
+                  type: 'entering',
+                  animation: instruction.animation.normalized
+                }
+              })
+              break
             }
           }
 
-          break;
+          break
         }
 
-        case `exitAnimation`: {
+        case 'exitAnimation': {
           const index = characters.findIndex(
             (character) =>
               character.normalized === instruction.character.normalized
-          );
+          )
 
           const previousCharacter = state.characters[
             index
-          ] as InterpreterStateCharacter;
+          ] as InterpreterStateCharacter
 
-          const character = characters[index] as InterpreterStateCharacter;
+          const character = characters[index] as InterpreterStateCharacter
 
           switch (previousCharacter.state.type) {
-            case `entering`:
-            case `present`: {
+            case 'entering':
+            case 'present': {
               characters.splice(index, 1, {
                 ...character,
                 state: {
-                  type: `exiting`,
-                  animation: instruction.animation.normalized,
-                },
-              });
+                  type: 'exiting',
+                  animation: instruction.animation.normalized
+                }
+              })
 
-              break;
+              break
             }
 
-            case `exiting`:
-            case `notPresent`:
+            case 'exiting':
+            case 'notPresent':
               characters.splice(index, 1, {
                 ...character,
                 state: {
-                  type: `notPresent`,
-                },
-              });
+                  type: 'notPresent'
+                }
+              })
 
-              break;
+              break
           }
-          break;
+          break
         }
 
-        case `location`: {
-          background = instruction.background.normalized;
+        case 'location': {
+          background = instruction.background.normalized
 
-          break;
+          break
         }
 
-        case `speaker`: {
+        case 'speaker': {
           speakers = instruction.characters.map(
             (character) => character.normalized
-          );
+          )
 
-          break;
+          break
         }
 
-        case `line`: {
-          line = stripRuns(instruction.content);
+        case 'line': {
+          line = stripRuns(instruction.content)
 
-          break;
+          break
         }
 
-        case `menuOption`: {
+        case 'menuOption': {
           if (conditionPasses(instruction.condition)) {
-            menuOptions.push(instruction);
+            menuOptions.push(instruction)
           }
 
-          break;
+          break
         }
 
-        case `jump`: {
+        case 'jump': {
           if (conditionPasses(instruction.condition)) {
-            instructionIndex = instruction.instructionIndex;
+            instructionIndex = instruction.instructionIndex
 
-            continue;
+            continue
           } else {
-            break;
+            break
           }
         }
       }
 
-      instructionIndex++;
+      instructionIndex++
 
       if (instructionIndex === document.instructions.length) {
-        instructionIndex = 0;
+        instructionIndex = 0
       }
     }
   }
-};
+}

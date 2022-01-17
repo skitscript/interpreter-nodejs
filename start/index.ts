@@ -1,9 +1,9 @@
 import type {
   InterpreterState,
   InterpreterStateCharacter,
-  ValidDocument,
-} from "@skitscript/types-nodejs";
-import { resume } from "../resume";
+  ValidDocument
+} from '@skitscript/types-nodejs'
+import { resume } from '../resume'
 
 /**
  * Starts a new session of a given parsed document.
@@ -13,16 +13,16 @@ import { resume } from "../resume";
 export const start = (document: ValidDocument): InterpreterState => {
   if (document.instructions.length === 0) {
     return {
-      type: `invalid`,
-      error: { type: `infiniteLoop` },
-    };
+      type: 'invalid',
+      error: { type: 'infiniteLoop' }
+    }
   }
 
-  const characters: InterpreterStateCharacter[] = [];
+  const characters: InterpreterStateCharacter[] = []
 
   for (const identifier of document.identifierInstances) {
     if (
-      identifier.type === `character` &&
+      identifier.type === 'character' &&
       !characters.some(
         (character) => character.normalized === identifier.normalized
       )
@@ -30,23 +30,23 @@ export const start = (document: ValidDocument): InterpreterState => {
       characters.push({
         normalized: identifier.normalized,
         verbatim: identifier.verbatim,
-        emote: `neutral`,
-        state: { type: `notPresent` },
-      });
+        emote: 'neutral',
+        state: { type: 'notPresent' }
+      })
     }
   }
 
   return resume(
     document,
     {
-      type: `valid`,
+      type: 'valid',
       flagsSet: [],
       characters,
       speakers: [],
       background: null,
       line: null,
-      interaction: { type: `dismiss`, instructionIndex: 0 },
+      interaction: { type: 'dismiss', instructionIndex: 0 }
     },
     0
-  );
-};
+  )
+}
