@@ -3,138 +3,138 @@ import type {
   InterpreterStateCharacter,
   InterpreterStateError,
   InterpreterStateRun,
-  MenuInterpreterStateInteractionOption,
-} from "@skitscript/types-nodejs";
-import * as fs from "fs";
-import * as path from "path";
-import { start, resume } from ".";
-import { parse } from "@skitscript/parser-nodejs";
+  MenuInterpreterStateInteractionOption
+} from '@skitscript/types-nodejs'
+import * as fs from 'fs'
+import * as path from 'path'
+import { start, resume } from '.'
+import { parse } from '@skitscript/parser-nodejs'
 
 const casesPath = path.join(
   __dirname,
-  `submodules`,
-  `skitscript`,
-  `interpreter-test-suite`,
-  `cases`
-);
+  'submodules',
+  'skitscript',
+  'interpreter-test-suite',
+  'cases'
+)
 
-const caseNames = fs.readdirSync(casesPath);
+const caseNames = fs.readdirSync(casesPath)
 
 for (const caseName of caseNames) {
   describe(caseName, () => {
-    const casePath = path.join(casesPath, caseName);
+    const casePath = path.join(casesPath, caseName)
 
-    let document: Document;
+    let document: Document
 
     beforeAll(async () => {
       const source = await fs.promises.readFile(
-        path.join(casePath, `input.skitscript`),
-        `utf8`
-      );
+        path.join(casePath, 'input.skitscript'),
+        'utf8'
+      )
 
-      document = parse(source);
-    });
+      document = parse(source)
+    })
 
-    it(`is parsable`, () => {
+    it('is parsable', () => {
       expect(document.type)
         .withContext(JSON.stringify(document, null, 2))
-        .toEqual(`valid`);
-    });
+        .toEqual('valid')
+    })
 
-    it(`generates no warnings once parsed`, () => {
-      if (document.type === `valid`) {
+    it('generates no warnings once parsed', () => {
+      if (document.type === 'valid') {
         expect(document.warnings)
           .withContext(JSON.stringify(document.warnings, null, 2))
-          .toEqual([]);
+          .toEqual([])
       }
-    });
+    })
 
-    const scenariosPath = path.join(casePath, `scenarios`);
+    const scenariosPath = path.join(casePath, 'scenarios')
 
-    const scenarioNames = fs.readdirSync(scenariosPath);
+    const scenarioNames = fs.readdirSync(scenariosPath)
 
     for (const scenarioName of scenarioNames) {
       describe(scenarioName, () => {
         type Step =
           | {
-              readonly type: `invalid`;
-              readonly error: InterpreterStateError;
-            }
+            readonly type: 'invalid'
+            readonly error: InterpreterStateError
+          }
           | {
-              readonly type: `valid`;
-              readonly characters: ReadonlyArray<InterpreterStateCharacter>;
-              readonly speakers: ReadonlyArray<string>;
-              readonly background: null | string;
-              readonly line: null | ReadonlyArray<InterpreterStateRun>;
-              readonly interaction:
-                | {
-                    readonly type: `dismiss`;
-                  }
-                | {
-                    readonly type: `menu`;
-                    readonly options: ReadonlyArray<{
-                      readonly content: ReadonlyArray<InterpreterStateRun>;
-                    }>;
-                  };
-            };
+            readonly type: 'valid'
+            readonly characters: readonly InterpreterStateCharacter[]
+            readonly speakers: readonly string[]
+            readonly background: null | string
+            readonly line: null | readonly InterpreterStateRun[]
+            readonly interaction:
+            | {
+              readonly type: 'dismiss'
+            }
+            | {
+              readonly type: 'menu'
+              readonly options: ReadonlyArray<{
+                readonly content: readonly InterpreterStateRun[]
+              }>
+            }
+          }
 
-        let expected: ReadonlyArray<Step | number>;
-        let actual: ReadonlyArray<Step | number>;
+        let expected: ReadonlyArray<Step | number>
+        let actual: ReadonlyArray<Step | number>
 
         beforeAll(async () => {
-          if (document.type === `valid`) {
+          if (document.type === 'valid') {
             const expectedText = await fs.promises.readFile(
               path.join(scenariosPath, scenarioName),
-              `utf8`
-            );
+              'utf8'
+            )
 
-            expected = JSON.parse(expectedText);
-            actual = [];
+            expected = JSON.parse(expectedText)
+            actual = []
 
-            let state = start(document);
+            let state = start(document)
 
             for (;;) {
               actual = [
                 ...actual,
-                state.type === `valid`
+                state.type === 'valid'
                   ? {
-                      type: `valid`,
+                      type: 'valid',
                       characters: state.characters,
                       speakers: state.speakers,
                       background: state.background,
                       line: state.line,
                       interaction:
-                        state.interaction.type === `dismiss`
-                          ? { type: `dismiss` }
+                        state.interaction.type === 'dismiss'
+                          ? { type: 'dismiss' }
                           : {
-                              type: `menu`,
+                              type: 'menu',
                               options: state.interaction.options.map(
                                 (option) => ({
-                                  content: option.content,
+                                  content: option.content
                                 })
-                              ),
-                            },
+                              )
+                            }
                     }
-                  : state,
-              ];
+                  : state
+              ]
 
               if (actual.length === expected.length) {
-                break;
-              } else if (state.type === `invalid`) {
-                fail(`Expected to continue after receiving an invalid state.`);
+                break
+              } else if (state.type === 'invalid') {
+                fail('Expected to continue after receiving an invalid state.')
 
-                break;
+                break
               }
-              if (state.interaction.type === `dismiss`) {
+              if (state.interaction.type === 'dismiss') {
                 state = resume(
                   document,
                   state,
                   state.interaction.instructionIndex
-                );
+                )
               } else {
-                const optionIndex = expected[actual.length] as number;
+                const optionIndex = expected[actual.length] as number
 
-                actual = [...actual, optionIndex];
+                actual = [...actual, optionIndex]
 
                 state = resume(
                   document,
@@ -144,18 +144,18 @@ for (const caseName of caseNames) {
                       optionIndex
                     ] as MenuInterpreterStateInteractionOption
                   ).instructionIndex
-                );
+                )
               }
             }
           }
-        });
+        })
 
-        it(`executes as expected`, () => {
-          if (document.type === `valid`) {
-            expect(actual).toEqual(expected);
+        it('executes as expected', () => {
+          if (document.type === 'valid') {
+            expect(actual).toEqual(expected)
           }
-        });
-      });
+        })
+      })
     }
-  });
+  })
 }
