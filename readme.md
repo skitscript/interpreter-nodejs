@@ -30,29 +30,13 @@ NPM package:
 npm install --save @skitscript/interpreter-nodejs
 ```
 
-Additionally install the types package:
-
-```bash
-npm install --save-dev @skitscript/types-nodejs
-```
-
-### Install `@skitscript/types-nodejs` as a peer dependency
-
-If you are developing a package which includes types from
-`@skitscript/types-nodejs` in its public API, additionally install it as a peer
-dependency so that consumers of your package know to include it as well:
-
-```bash
-npm install --save-peer @skitscript/types-nodejs
-```
-
 ### Install as a development dependency
 
 If this is used when building your application and not at runtime, install it as
 a development dependency:
 
 ```bash
-npm install --save-dev @skitscript/interpreter-nodejs @skitscript/types-nodejs
+npm install --save-dev @skitscript/interpreter-nodejs
 ```
 
 ## Usage
@@ -109,3 +93,40 @@ console.log(nextState);
   "interaction": {...}
 }
 ```
+
+### Types
+
+A comprehensive library of types representing the results of attempting to
+interpret parsed documents can be imported:
+
+```typescript
+import { InterpreterState } from "@skitscript/interpreter-nodejs";
+```
+
+#### States
+
+- [InterpreterState](./InterpreterState/index.ts)
+- [InterpreterStateRun](./InterpreterStateRun/index.ts)
+- [InvalidInterpreterState](./InvalidInterpreterState/index.ts)
+- [ValidInterpreterState](./ValidInterpreterState/index.ts)
+
+##### Characters
+
+- [EnteringInterpreterStateCharacterState](./EnteringInterpreterStateCharacterState/index.ts)
+- [ExitingInterpreterStateCharacterState](./ExitingInterpreterStateCharacterState/index.ts)
+- [InterpreterStateCharacter](./InterpreterStateCharacter/index.ts)
+- [InterpreterStateCharacterState](./InterpreterStateCharacterState/index.ts)
+- [NotPresentInterpreterStateCharacterState](./NotPresentInterpreterStateCharacterState/index.ts)
+- [PresentInterpreterStateCharacterState](./PresentInterpreterStateCharacterState/index.ts)
+
+##### Interactions
+
+- [DismissInterpreterStateInteraction](./DismissInterpreterStateInteraction/index.ts)
+- [InterpreterStateInteraction](./InterpreterStateInteraction/index.ts)
+- [MenuInterpreterStateInteraction](./MenuInterpreterStateInteraction/index.ts)
+- [MenuInterpreterStateInteractionOption](./MenuInterpreterStateInteractionOption/index.ts)
+
+#### Errors
+
+- [InfiniteLoopInterpreterStateError](./InfiniteLoopInterpreterStateError/index.ts)
+- [InterpreterStateError](./InterpreterStateError/index.ts)
