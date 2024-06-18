@@ -8,3 +8,5 @@ import type { MenuInterpreterStateInteraction } from '../MenuInterpreterStateInt
 export type InterpreterStateInteraction =
   | DismissInterpreterStateInteraction
   | MenuInterpreterStateInteraction
+
+/* c8 ignore next */

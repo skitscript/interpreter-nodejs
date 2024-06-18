@@ -12,3 +12,5 @@ export interface ExitingInterpreterStateCharacterState {
    */
   readonly animation: string
 }
+
+/* c8 ignore next */

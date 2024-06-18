@@ -1,15 +1,8 @@
-import type {
-  Document,
-  InterpreterStateCharacter,
-  InterpreterStateError,
-  InterpreterStateRun,
-  MenuInterpreterStateInteractionOption
-} from '@skitscript/types-nodejs'
 import * as fs from 'fs'
 import * as path from 'path'
 import * as url from 'url'
-import { start, resume } from './index.js'
-import { parse } from '@skitscript/parser-nodejs'
+import { start, resume, type InterpreterStateError, type InterpreterStateCharacter, type InterpreterStateRun, type MenuInterpreterStateInteractionOption } from './index.js'
+import { parse, type Document } from '@skitscript/parser-nodejs'
 
 const casesPath = path.join(
   path.dirname(url.fileURLToPath(import.meta.url)),

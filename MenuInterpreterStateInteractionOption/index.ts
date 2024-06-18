@@ -14,3 +14,5 @@ export interface MenuInterpreterStateInteractionOption {
    */
   readonly instructionIndex: number
 }
+
+/* c8 ignore next */

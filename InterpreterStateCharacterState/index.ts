@@ -11,3 +11,5 @@ export type InterpreterStateCharacterState =
   | EnteringInterpreterStateCharacterState
   | PresentInterpreterStateCharacterState
   | ExitingInterpreterStateCharacterState
+
+/* c8 ignore next */

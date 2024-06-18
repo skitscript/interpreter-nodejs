@@ -45,3 +45,5 @@ export interface ValidInterpreterState {
    */
   readonly interaction: InterpreterStateInteraction
 }
+
+/* c8 ignore next */

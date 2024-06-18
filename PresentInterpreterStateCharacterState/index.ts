@@ -7,3 +7,5 @@ export interface PresentInterpreterStateCharacterState {
    */
   readonly type: 'present'
 }
+
+/* c8 ignore next */

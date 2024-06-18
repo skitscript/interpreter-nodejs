@@ -1,14 +1,8 @@
-import type {
-  Condition,
-  Instruction,
-  InterpreterState,
-  InterpreterStateCharacter,
-  InterpreterStateRun,
-  MenuOptionInstruction,
-  Run,
-  ValidDocument,
-  ValidInterpreterState
-} from '@skitscript/types-nodejs'
+import type { Condition, Instruction, MenuOptionInstruction, Run, ValidDocument } from '@skitscript/parser-nodejs'
+import type { InterpreterStateRun } from '../InterpreterStateRun'
+import type { ValidInterpreterState } from '../ValidInterpreterState'
+import type { InterpreterState } from '../InterpreterState'
+import type { InterpreterStateCharacter } from '../InterpreterStateCharacter'
 
 const stripRuns = (
   runs: readonly Run[]

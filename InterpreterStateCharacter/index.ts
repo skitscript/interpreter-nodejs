@@ -24,3 +24,5 @@ export interface InterpreterStateCharacter {
    */
   readonly state: InterpreterStateCharacterState
 }
+
+/* c8 ignore next */

@@ -1,9 +1,7 @@
-import type {
-  InterpreterState,
-  InterpreterStateCharacter,
-  ValidDocument
-} from '@skitscript/types-nodejs'
+import type { ValidDocument } from '@skitscript/parser-nodejs'
 import { resume } from '../resume/index.js'
+import type { InterpreterState } from '../InterpreterState/index.js'
+import type { InterpreterStateCharacter } from '../InterpreterStateCharacter/index.js'
 
 /**
  * Starts a new session of a given parsed document.

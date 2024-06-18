@@ -13,3 +13,5 @@ export interface DismissInterpreterStateInteraction {
    */
   readonly instructionIndex: number
 }
+
+/* c8 ignore next */

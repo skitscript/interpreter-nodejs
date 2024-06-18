@@ -14,3 +14,5 @@ export interface MenuInterpreterStateInteraction {
    */
   readonly options: readonly MenuInterpreterStateInteractionOption[]
 }
+
+/* c8 ignore next */

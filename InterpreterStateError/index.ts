@@ -4,3 +4,5 @@ import type { InfiniteLoopInterpreterStateError } from '../InfiniteLoopInterpret
  * An error which can be encountered while interpreting a parsed document.
  */
 export type InterpreterStateError = InfiniteLoopInterpreterStateError
+
+/* c8 ignore next */

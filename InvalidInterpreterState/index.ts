@@ -14,3 +14,5 @@ export interface InvalidInterpreterState {
    */
   readonly error: InterpreterStateError
 }
+
+/* c8 ignore next */

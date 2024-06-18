@@ -7,3 +7,5 @@ export interface NotPresentInterpreterStateCharacterState {
    */
   readonly type: 'notPresent'
 }
+
+/* c8 ignore next */

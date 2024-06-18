@@ -25,3 +25,5 @@ export interface InterpreterStateRun {
    */
   readonly plainText: string
 }
+
+/* c8 ignore next */

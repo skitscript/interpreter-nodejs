@@ -8,3 +8,5 @@ export interface InfiniteLoopInterpreterStateError {
    */
   readonly type: 'infiniteLoop'
 }
+
+/* c8 ignore next */
