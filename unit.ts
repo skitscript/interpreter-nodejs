@@ -7,11 +7,12 @@ import type {
 } from '@skitscript/types-nodejs'
 import * as fs from 'fs'
 import * as path from 'path'
-import { start, resume } from '.'
+import * as url from 'url'
+import { start, resume } from './index.js'
 import { parse } from '@skitscript/parser-nodejs'
 
 const casesPath = path.join(
-  __dirname,
+  path.dirname(url.fileURLToPath(import.meta.url)),
   'submodules',
   'skitscript',
   'interpreter-test-suite',

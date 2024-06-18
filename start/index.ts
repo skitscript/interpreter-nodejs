@@ -3,7 +3,7 @@ import type {
   InterpreterStateCharacter,
   ValidDocument
 } from '@skitscript/types-nodejs'
-import { resume } from '../resume'
+import { resume } from '../resume/index.js'
 
 /**
  * Starts a new session of a given parsed document.
