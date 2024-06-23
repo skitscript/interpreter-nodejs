@@ -45,6 +45,7 @@
     "**/index.d.ts"
   ],
   "types": "index.d.ts",
+  "main": "index.js",
   "sideEffects": false,
   "type": "module"
 }
