@@ -62,7 +62,8 @@ console.log(state);
   "speakers": [...],
   "background": null,
   "line": null,
-  "interaction": {...}
+  "interaction": {...},
+  "warnings": [...],
 }
 ```
 
@@ -90,7 +91,8 @@ console.log(nextState);
   "speakers": [...],
   "background": null,
   "line": null,
-  "interaction": {...}
+  "interaction": {...},
+  "warnings": [...],
 }
 ```
 
@@ -100,33 +102,38 @@ A comprehensive library of types representing the results of attempting to
 interpret parsed documents can be imported:
 
 ```typescript
-import { InterpreterState } from "@skitscript/interpreter-nodejs";
+import { State } from "@skitscript/interpreter-nodejs";
 ```
 
 #### States
 
-- [InterpreterState](./InterpreterState/index.ts)
-- [InterpreterStateRun](./InterpreterStateRun/index.ts)
-- [InvalidInterpreterState](./InvalidInterpreterState/index.ts)
-- [ValidInterpreterState](./ValidInterpreterState/index.ts)
+- [InvalidState](./InvalidState/index.ts)
+- [State](./State/index.ts)
+- [ValidState](./ValidState/index.ts)
 
 ##### Characters
 
-- [EnteringInterpreterStateCharacterState](./EnteringInterpreterStateCharacterState/index.ts)
-- [ExitingInterpreterStateCharacterState](./ExitingInterpreterStateCharacterState/index.ts)
-- [InterpreterStateCharacter](./InterpreterStateCharacter/index.ts)
-- [InterpreterStateCharacterState](./InterpreterStateCharacterState/index.ts)
-- [NotPresentInterpreterStateCharacterState](./NotPresentInterpreterStateCharacterState/index.ts)
-- [PresentInterpreterStateCharacterState](./PresentInterpreterStateCharacterState/index.ts)
+- [Character](./Character/index.ts)
+- [CharacterState](./CharacterState/index.ts)
+- [EnteringCharacterState](./EnteringCharacterState/index.ts)
+- [ExitingCharacterState](./ExitingCharacterState/index.ts)
+- [NotPresentCharacterState](./NotPresentCharacterState/index.ts)
+- [PresentCharacterState](./PresentCharacterState/index.ts)
 
 ##### Interactions
 
-- [DismissInterpreterStateInteraction](./DismissInterpreterStateInteraction/index.ts)
-- [InterpreterStateInteraction](./InterpreterStateInteraction/index.ts)
-- [MenuInterpreterStateInteraction](./MenuInterpreterStateInteraction/index.ts)
-- [MenuInterpreterStateInteractionOption](./MenuInterpreterStateInteractionOption/index.ts)
+- [DismissInteraction](./DismissInteraction/index.ts)
+- [Interaction](./Interaction/index.ts)
+- [MenuInteraction](./MenuInteraction/index.ts)
+- [MenuInteractionOption](./MenuInteractionOption/index.ts)
 
 #### Errors
 
-- [InfiniteLoopInterpreterStateError](./InfiniteLoopInterpreterStateError/index.ts)
-- [InterpreterStateError](./InterpreterStateError/index.ts)
+- [Error](./Error/index.ts)
+- [InfiniteLoopError](./InfiniteLoopError/index.ts)
+
+#### Warnings
+
+- [NonPresentCharacterExitedWarning](./NonPresentCharacterExitedWarning/index.ts)
+- [PresentCharacterEnteredWarning](./PresentCharacterEnteredWarning/index.ts)
+- [Warning](./Warning/index.ts)
