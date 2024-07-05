@@ -1,8 +1,8 @@
 import * as fs from 'fs'
 import * as path from 'path'
 import * as url from 'url'
-import { start, resume, type InterpreterStateError, type InterpreterStateCharacter, type InterpreterStateRun, type MenuInterpreterStateInteractionOption } from './index.js'
-import { parse, type Document } from '@skitscript/parser-nodejs'
+import { start, resume, type Error, type Character, type MenuInteractionOption } from './index.js'
+import { parse, type Document, type Run } from '@skitscript/parser-nodejs'
 
 const casesPath = path.join(
   path.dirname(url.fileURLToPath(import.meta.url)),
@@ -52,14 +52,14 @@ for (const caseName of caseNames) {
         type Step =
           | {
             readonly type: 'invalid'
-            readonly error: InterpreterStateError
+            readonly error: Error
           }
           | {
             readonly type: 'valid'
-            readonly characters: readonly InterpreterStateCharacter[]
+            readonly characters: readonly Character[]
             readonly speakers: readonly string[]
             readonly background: null | string
-            readonly line: null | readonly InterpreterStateRun[]
+            readonly line: null | readonly Run[]
             readonly interaction:
             | {
               readonly type: 'dismiss'
@@ -67,7 +67,7 @@ for (const caseName of caseNames) {
             | {
               readonly type: 'menu'
               readonly options: ReadonlyArray<{
-                readonly content: readonly InterpreterStateRun[]
+                readonly content: readonly Run[]
               }>
             }
           }
@@ -90,26 +90,7 @@ for (const caseName of caseNames) {
             for (;;) {
               actual = [
                 ...actual,
-                state.type === 'valid'
-                  ? {
-                      type: 'valid',
-                      characters: state.characters,
-                      speakers: state.speakers,
-                      background: state.background,
-                      line: state.line,
-                      interaction:
-                        state.interaction.type === 'dismiss'
-                          ? { type: 'dismiss' }
-                          : {
-                              type: 'menu',
-                              options: state.interaction.options.map(
-                                (option) => ({
-                                  content: option.content
-                                })
-                              )
-                            }
-                    }
-                  : state
+                state
               ]
 
               if (actual.length === expected.length) {
@@ -136,7 +117,7 @@ for (const caseName of caseNames) {
                   (
                     state.interaction.options[
                       optionIndex
-                    ] as MenuInterpreterStateInteractionOption
+                    ] as MenuInteractionOption
                   ).instructionIndex
                 )
               }

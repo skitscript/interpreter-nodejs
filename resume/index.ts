@@ -1,18 +1,8 @@
 import type { Condition, Instruction, MenuOptionInstruction, Run, ValidDocument } from '@skitscript/parser-nodejs'
-import type { InterpreterStateRun } from '../InterpreterStateRun'
-import type { ValidInterpreterState } from '../ValidInterpreterState'
-import type { InterpreterState } from '../InterpreterState'
-import type { InterpreterStateCharacter } from '../InterpreterStateCharacter'
-
-const stripRuns = (
-  runs: readonly Run[]
-): readonly InterpreterStateRun[] =>
-  runs.map((run) => ({
-    bold: run.bold,
-    code: run.code,
-    italic: run.italic,
-    plainText: run.plainText
-  }))
+import type { ValidState } from '../ValidState'
+import type { State } from '../State'
+import type { Character } from '../Character'
+import type { Warning } from '../Warning'
 
 /**
  * Continues a previously started session.
@@ -23,11 +13,11 @@ const stripRuns = (
  */
 export const resume = (
   document: ValidDocument,
-  state: ValidInterpreterState,
+  state: ValidState,
   instructionIndex: number
-): InterpreterState => {
+): State => {
   const flagsSet = [...state.flagsSet]
-  const characters: InterpreterStateCharacter[] = state.characters.map(
+  const characters: Character[] = state.characters.map(
     (character) => ({
       ...character,
       state:
@@ -40,7 +30,7 @@ export const resume = (
   )
   let background = state.background
   let speakers = state.speakers
-  let line: null | readonly InterpreterStateRun[] = null
+  let line: null | readonly Run[] = null
   const menuOptions: MenuOptionInstruction[] = []
 
   const history: Array<{
@@ -82,6 +72,8 @@ export const resume = (
     }
   }
 
+  const warnings: Warning[] = []
+
   for (;;) {
     const instruction = document.instructions[instructionIndex] as Instruction
 
@@ -99,10 +91,11 @@ export const resume = (
         interaction: {
           type: 'menu',
           options: menuOptions.map((menuOption) => ({
-            content: stripRuns(menuOption.content),
+            content: menuOption.content,
             instructionIndex: menuOption.instructionIndex
           }))
-        }
+        },
+        warnings
       }
     } else if (
       line !== null &&
@@ -118,7 +111,8 @@ export const resume = (
         interaction: {
           type: 'dismiss',
           instructionIndex
-        }
+        },
+        warnings
       }
     } else if (
       history.some(
@@ -163,7 +157,7 @@ export const resume = (
               character.normalized === instruction.character.normalized
           )
 
-          const character = characters[index] as InterpreterStateCharacter
+          const character = characters[index] as Character
 
           characters.splice(index, 1, {
             ...character,
@@ -181,9 +175,25 @@ export const resume = (
 
           const previousCharacter = state.characters[
             index
-          ] as InterpreterStateCharacter
+          ] as Character
 
-          const character = characters[index] as InterpreterStateCharacter
+          const character = characters[index] as Character
+
+          switch (character.state.type) {
+            case 'entering':
+            case 'present':
+              warnings.push({
+                type: 'presentCharacterEntered',
+                line: instruction.line,
+                character: instruction.character,
+                animation: instruction.animation
+              })
+              break
+
+            case 'exiting':
+            case 'notPresent':
+              break
+          }
 
           switch (previousCharacter.state.type) {
             case 'entering':
@@ -220,9 +230,25 @@ export const resume = (
 
           const previousCharacter = state.characters[
             index
-          ] as InterpreterStateCharacter
+          ] as Character
 
-          const character = characters[index] as InterpreterStateCharacter
+          const character = characters[index] as Character
+
+          switch (character.state.type) {
+            case 'entering':
+            case 'present':
+              break
+
+            case 'exiting':
+            case 'notPresent':
+              warnings.push({
+                type: 'nonPresentCharacterExited',
+                line: instruction.line,
+                character: instruction.character,
+                animation: instruction.animation
+              })
+              break
+          }
 
           switch (previousCharacter.state.type) {
             case 'entering':
@@ -267,7 +293,7 @@ export const resume = (
         }
 
         case 'line': {
-          line = stripRuns(instruction.content)
+          line = instruction.content
 
           break
         }
